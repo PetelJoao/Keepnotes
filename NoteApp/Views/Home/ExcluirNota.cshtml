@@ -1,0 +1,94 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+    List<NOTA>? NotasSalvas = new List<NOTA>();
+
+    string caminho = "wwwroot/Data/Notasbd.txt";
+    FileInfo baseDado = new FileInfo(caminho);
+
+
+    if (baseDado.Length != 0)
+    {
+        using (StreamReader leitor = new StreamReader(caminho))
+        {
+            string linha;
+
+            while ((linha = leitor.ReadLine()) != null)
+            {
+
+                string[] partes = linha.Split('.');
+
+                if (partes.Length == 2)
+                {
+                    if (ViewData["TNota"] != null)
+                    {
+                        var Notadel = (ViewData["TNota"].ToString()).Trim();
+                        if (partes[0].Trim() != Notadel && partes[0] != "~")
+                        {
+                            NotasSalvas.Add(
+                         new NOTA
+                                 {
+                                     Titulo = partes[0],
+                                     Descricao = partes[1]
+                                 }
+                                            );
+
+
+
+                        }
+                        else{
+
+                            using (StreamWriter escritor = new StreamWriter("wwwroot/Data/Notaexcluida.txt", true))
+                            {
+                                escritor.WriteLine($"{partes[0].ToString()}. {partes[1].ToString()}");
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+            ViewData["TNota"] = null;
+
+        }
+        using (StreamWriter escritor = new StreamWriter(caminho))
+        {
+           foreach (var nota in NotasSalvas)
+           {
+                escritor.WriteLine($"{nota.Titulo.ToString()}. {nota.Descricao.ToString()}");
+
+           }
+
+          
+        }
+
+
+
+    }
+
+}
+
+<div class="margin-left" style="height:20px"> </div>
+<div class="margin-center container mt-5  w-100">
+
+    <div class=" rounded shadow p-5 h-100 w-50 bg-dark m-auto">
+        <h2 class="text-center text-light">Digite a nota a excluir</h2>
+        <form method="post">
+            <div class="form-group">
+                <label for="noteTitle" class=" text-light">Título da Nota</label>
+                <input type="text" name="Notaex" class="form-control text-dark" id="noteTitle" placeholder="Digite o título da nota" required>
+            </div>
+           
+            <button type="submit" value="submit"  class="btn btn-primary">Adicionar Nota</button>
+        </form>
+
+    </div>
+
+</div>
+
+
+

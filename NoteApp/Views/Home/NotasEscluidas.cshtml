@@ -1,0 +1,69 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    List<NOTA>? NotasSalvas = new List<NOTA>();
+    string caminho = "wwwroot/Data/Notaexcluida.txt";
+    FileInfo baseDado = new FileInfo(caminho);
+
+    if (baseDado.Length != 0)
+    {
+        using (StreamReader leitor = new StreamReader(caminho))
+        {
+            string linha;
+
+            while ((linha = leitor.ReadLine()) != null)
+            {
+
+                string[] partes = linha.Split('.');
+
+                if (partes.Length == 2)
+                {
+                    string nome = partes[0].Trim();
+                    string descricao = partes[1].Trim();
+
+                    NotasSalvas.Add(
+                         new NOTA
+                                 {
+                                     Titulo = partes[0],
+                                     Descricao = partes[1]
+                                 }
+                    );
+
+                }
+
+                else
+                {
+                    Console.WriteLine($"Linha inválida: {linha}");
+                }
+
+            }
+        }
+
+    }
+
+}
+
+
+<div class="margin-left alert alert-primary text-center" role="alert">    Veja Todas as suas Notas AQUI </div>
+
+<div class="margin-left  mt-5 w-75 h-100  d-grid  gap-2 overflow-auto" id="TodasNotas">
+
+    @foreach (var nota in NotasSalvas)
+    {
+        <article id="notaid" class="Nota border border-2   border-light rounded shadow p-5">
+            <h1 class="" style="color:rgb(30, 30, 30)">@nota.Titulo</h1>
+            <div class="overflow-hidden">
+                <p class="" style="color:rgb(30, 30, 30)">
+                    @nota.Descricao
+                </p>
+            </div>
+            <footer class="border-top  pt-2 mt-2 text-muted">
+                <p> @nota.Data </p>
+
+            </footer>
+        </article>
+    }
+
+
+</div>
